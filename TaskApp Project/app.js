@@ -10,7 +10,8 @@ loadEventListeners();
  
 //Load all even listeners
 function loadEventListeners() {
-
+    //DOM load event
+    document.addEventListener('DOMContentLoaded', getTasks);
     //add task event
     form.addEventListener('submit', addTask);
     //remove task event
@@ -19,11 +20,36 @@ function loadEventListeners() {
     clearBtn.addEventListener('click', clearTasks);
     // filter tasks event
     filter.addEventListener('keyup', filterTasks);
-
 }
 
 // get tasks from Local Storage
+function getTasks() {
+    let tasks;
+        if(localStorage.getItem('tasks') === null){
+            task = [];
+        } else {
+            tasks = JSON.parse(localStorage.getItem('tasks'));
+        }
 
+    tasks.forEach(function(task){
+        //create li element 
+        const li = document.createElement('li');
+        //add class to li 
+        li.className = 'collection-item'; //in materialize collection-item is a class
+        //create text node and append to li
+        li.appendChild(document.createTextNode(task));
+        // create new link element
+        const link = document.createElement('a');
+        //add class to link
+        link.className = 'delete-item secondary-content';
+        // add icon into inner html
+        link.innerHTML = '<i class="fa fa-remove"></i>';
+        //append the link to li
+        li.appendChild(link);
+        //append li to ul
+        taskList.appendChild(li);
+    });
+}
 
 function addTask(e){
  
@@ -55,6 +81,9 @@ function addTask(e){
     //append li to ul
     taskList.appendChild(li);
 
+    // store in LS
+    storeTaskInLocalStorage(taskInput.value);
+    
     //clear input
     taskInput.value = '';
 
@@ -65,6 +94,19 @@ function addTask(e){
 
 // Store Task
 
+function storeTaskInLocalStorage(task){
+    let tasks;
+    if(localStorage.getItem('tasks') === null){
+        task = [];
+        //if local storage is empty, then set tasks to first index of empty array
+    } else {
+        tasks = JSON.parse(localStorage.getItem('tasks'));
+        // because local storage stores only strings, so we need to parse it
+    }
+    tasks.push(task);
+    //adding to array set in let tasks;
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
 
 // Remove Task function 
 
